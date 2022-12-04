@@ -6,6 +6,7 @@ from tkinter import ttk,messagebox
 class Window(tk.Tk):
     def __init__(self,cities_dict):
         super().__init__()
+        
         #建立Label pack是由上而下!
         tk.Label(self,text="各縣市4天天氣預測",font=('Arial',20)).pack(padx=30,pady=30) #類似CSS padding的設定 上下左右各推30
 
@@ -15,7 +16,7 @@ class Window(tk.Tk):
 
 
         #設定grid的row數量
-        grid_row_nums = 3
+        rownum = 3
         #enumerate 容器會建立一個索引 會傳回tuple型態 
         #cities_dict(index,key)  
         #cities_dict.items() (index,cities)  cities裡又包含(key,value)  command=self.button_click,
@@ -24,7 +25,7 @@ class Window(tk.Tk):
             cname, ename = cities
             btn=tk.Button(buttons_frame,text=f"{cname}\n{ename}",
             font=('arial',15),width=8,padx=20,pady=5)
-            btn.grid(row=index % grid_row_nums,column=index // grid_row_nums)
+            btn.grid(row=index % rownum,column=index // rownum)
             btn.bind('<Button>',self.button_click)
         
         
@@ -39,13 +40,13 @@ class Window(tk.Tk):
         ename=name_list[1]
         
         #判斷是否是except
-        errorLabel=False
+        errorMsg=False
         try:
             city_forcase=ds.get_forcast_data(ename,api_key)
         except Exception as e:
             print(e)
             city_forcase=None
-            errorLabel=True
+            errorMsg=True
         finally:
             #LabelFrame
             if hasattr(self,"displayFrame") :
@@ -56,10 +57,9 @@ class Window(tk.Tk):
 
 
             #出現錯誤訊息 要補上錯誤對話框
-            if  errorLabel:
+            if  errorMsg:
                 tk.Label(self.displayFrame, text="無資料!").pack(pady=10)
                 messagebox.showwarning("無資料",f"{cname}沒有天氣資料")
-                return
 
 
 class DisplayFrame(ttk.LabelFrame):
@@ -126,22 +126,10 @@ class CustomFrame(tk.Frame):
 
 def main():
     window=Window(ds.tw_county_names)
-    window.title("各縣市4天天氣預測")
+    window.title("各縣市4天天氣預測程式")
     window.mainloop()
 
 
-
-'''
-    print("這裡是main function的執行點")
-    try:
-        list_data=ds.get_forcast_data(ds.tw_county_names["金門"],api_key)
-    except Exception as e:
-        print(e)
-        return
-    
-    for item in list_data:
-        print(item['dt_txt'])
-'''
 if __name__=="__main__":
     print("這裡是程式的執行點")
     main()
